@@ -1,197 +1,92 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login & Sign Up Firebase (Modular)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitur Aplikasi Kecil</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 50px;
     }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+    }
+
     .container {
-      max-width: 400px;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #ccc;
+      display: flex;
+      gap: 25px; /* Jarak antar fitur */
+    }
+
+    .feature-container {
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .feature {
+      width: 50px;
+      height: 50px;
+      background-color: #ffffff;
       border-radius: 5px;
-      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s;
     }
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+
+    .feature:hover {
+      transform: translateY(-3px);
     }
-    button {
-      width: 95%;
-      padding: 10px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #007BFF;
-      color: white;
-      cursor: pointer;
+
+    /* Menyesuaikan ukuran gambar agar proporsional dengan kotak */
+    .feature img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
     }
-    button:hover {
-      background: #0056b3;
-    }
-    .link {
-      margin-top: 10px;
-      color: #007BFF;
-      cursor: pointer;
-    }
-    .link:hover {
-      text-decoration: underline;
+
+    .title {
+      margin-top: 5px;
+      font-weight: bold;
+      font-size: 10px;
+      color: #333;
     }
   </style>
 </head>
 <body>
-
-  <!-- Container Login -->
-  <div id="login-container" class="container">
-    <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email" />
-    <input type="password" id="login-password" placeholder="Password" />
-    <button id="login-btn">Login</button>
-    <p class="link" id="reset-password-link">Lupa Password?</p>
-    <p class="link" id="show-signup-link">Belum Punya Akun? Sign Up</p>
-    <p id="login-message"></p>
+  <div class="container">
+    <!-- Fitur Pencarian -->
+    <a href="pencarian.html" class="feature-container">
+      <div class="feature">
+        <img src="https://iili.io/2phmQWB.png">
+      </div>
+      <div class="title">Berita & Informasi</div>
+    </a>
+    
+    <!-- Fitur Pengaturan -->
+    <a href="pengaturan.html" class="feature-container">
+      <div class="feature">
+        <img src="https://iili.io/2phmZiP.png">
+      </div>
+      <div class="title">Tutorial Digital</div>
+    </a>
+    
+    <!-- Fitur Dokumen -->
+    <a href="dokumen.html" class="feature-container">
+      <div class="feature">
+        <img src="https://iili.io/2phmPOx.png">
+      </div>
+      <div class="title">Cara Cuan</div>
+    </a>
   </div>
-
-  <!-- Container Sign Up -->
-  <div id="signup-container" class="container" style="display:none;">
-    <h2>Sign Up</h2>
-    <input type="text" id="signup-name" placeholder="Nama Lengkap" />
-    <input type="email" id="signup-email" placeholder="Email" />
-    <input type="password" id="signup-password" placeholder="Password" />
-    <input type="password" id="signup-password-confirm" placeholder="Masukkan Ulang Password" />
-    <button id="signup-btn">Sign Up</button>
-    <p class="link" id="show-login-link">Sudah Punya Akun? Login</p>
-    <p id="signup-message"></p>
-  </div>
-
-  <!-- Firebase Modular SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      sendPasswordResetEmail,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    // Konfigurasi Firebase (JANGAN hardcode API key di proyek publik)
-    const firebaseConfig = {
-      apiKey: "YOUR_FIREBASE_API_KEY",
-      authDomain: "your-project.firebaseapp.com",
-      projectId: "your-project-id",
-      storageBucket: "your-project.appspot.com",
-      messagingSenderId: "your-sender-id",
-      appId: "your-app-id"
-    };
-
-    // Inisialisasi Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Referensi elemen HTML
-    const loginContainer = document.getElementById("login-container");
-    const signupContainer = document.getElementById("signup-container");
-    const loginMessage = document.getElementById("login-message");
-    const signupMessage = document.getElementById("signup-message");
-
-    // Fungsi untuk Login
-    document.getElementById("login-btn").addEventListener("click", () => {
-      const email = document.getElementById("login-email").value.trim();
-      const password = document.getElementById("login-password").value;
-
-      if (!email || !password) {
-        loginMessage.innerText = "Email dan password wajib diisi!";
-        return;
-      }
-
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          window.location.href = "https://sites.google.com/view/sanivaratechid/halaman-muka/home";
-        })
-        .catch((error) => {
-          loginMessage.innerText = "Login gagal: " + error.message;
-        });
-    });
-
-    // Fungsi untuk Reset Password
-    document.getElementById("reset-password-link").addEventListener("click", () => {
-      const email = document.getElementById("login-email").value.trim();
-      if (!email) {
-        loginMessage.innerText = "Masukkan email untuk reset password!";
-        return;
-      }
-
-      sendPasswordResetEmail(auth, email)
-        .then(() => {
-          loginMessage.innerText = "Link reset password telah dikirim ke email Anda!";
-        })
-        .catch((error) => {
-          loginMessage.innerText = "Gagal mengirim email: " + error.message;
-        });
-    });
-
-    // Fungsi untuk Sign Up
-    document.getElementById("signup-btn").addEventListener("click", () => {
-      const name = document.getElementById("signup-name").value.trim();
-      const email = document.getElementById("signup-email").value.trim();
-      const password = document.getElementById("signup-password").value;
-      const passwordConfirm = document.getElementById("signup-password-confirm").value;
-
-      if (!name || !email || !password || !passwordConfirm) {
-        signupMessage.innerText = "Semua kolom harus diisi!";
-        return;
-      }
-
-      if (password.length < 6) {
-        signupMessage.innerText = "Password minimal 6 karakter!";
-        return;
-      }
-
-      if (password !== passwordConfirm) {
-        signupMessage.innerText = "Password tidak cocok!";
-        return;
-      }
-
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          updateProfile(userCredential.user, { displayName: name })
-            .then(() => {
-              window.location.href = "https://sites.google.com/view/sanivaratechid/halaman-muka/home";
-            })
-            .catch((error) => {
-              signupMessage.innerText = "Gagal menyimpan profil: " + error.message;
-            });
-        })
-        .catch((error) => {
-          signupMessage.innerText = "Gagal mendaftar: " + error.message;
-        });
-    });
-
-    // Navigasi antara tampilan Login dan Sign Up
-    document.getElementById("show-signup-link").addEventListener("click", () => {
-      loginContainer.style.display = "none";
-      signupContainer.style.display = "block";
-      loginMessage.innerText = "";
-      signupMessage.innerText = "";
-    });
-
-    document.getElementById("show-login-link").addEventListener("click", () => {
-      signupContainer.style.display = "none";
-      loginContainer.style.display = "block";
-      signupMessage.innerText = "";
-      loginMessage.innerText = "";
-    });
-  </script>
-
 </body>
 </html>
